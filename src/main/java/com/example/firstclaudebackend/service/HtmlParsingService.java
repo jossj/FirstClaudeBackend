@@ -22,7 +22,10 @@ public class HtmlParsingService {
     public Document fetch(String url) throws IOException {
         return Jsoup.connect(url)
                 .timeout(TIMEOUT_MS)
-                .userAgent("Mozilla/5.0")
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .header("Accept-Language", "en-AU,en;q=0.9")
+                .ignoreHttpErrors(true)
                 .get();
     }
 
