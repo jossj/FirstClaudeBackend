@@ -98,6 +98,44 @@ class HtmlParsingServiceTest {
         assertThat(service.extractImages(FAKE_URL)).isEmpty();
     }
 
+    // --- extractRunnerNames ---
+
+    @Test
+    void extractRunnerNames_returnsAllRunnerNames() throws IOException {
+        doReturn(buildDocument("""
+                <html><body>
+                  <div class="runner-name">Alice</div>
+                  <div class="runner-name">Bob</div>
+                  <div class="runner-name">Charlie</div>
+                </body></html>
+                """)).when(service).fetch(FAKE_URL);
+
+        assertThat(service.extractRunnerNames(FAKE_URL))
+                .containsExactly("Alice", "Bob", "Charlie");
+    }
+
+    @Test
+    void extractRunnerNames_filtersBlankEntries() throws IOException {
+        doReturn(buildDocument("""
+                <html><body>
+                  <div class="runner-name">Alice</div>
+                  <div class="runner-name">  </div>
+                  <div class="runner-name">Bob</div>
+                </body></html>
+                """)).when(service).fetch(FAKE_URL);
+
+        assertThat(service.extractRunnerNames(FAKE_URL))
+                .containsExactly("Alice", "Bob");
+    }
+
+    @Test
+    void extractRunnerNames_returnsEmptyList_whenNonePresent() throws IOException {
+        doReturn(buildDocument("<html><body><p>No runners</p></body></html>"))
+                .when(service).fetch(FAKE_URL);
+
+        assertThat(service.extractRunnerNames(FAKE_URL)).isEmpty();
+    }
+
     // --- extractBySelector ---
 
     @Test

@@ -32,6 +32,11 @@ public class HtmlParsingController {
         return service.extractImages(url);
     }
 
+    @GetMapping("/runner-names")
+    public List<String> runnerNames(@RequestParam String url) throws IOException {
+        return service.extractRunnerNames(url);
+    }
+
     @GetMapping("/select")
     public List<String> select(@RequestParam String url,
                                @RequestParam String selector) throws IOException {

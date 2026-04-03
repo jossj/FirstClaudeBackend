@@ -66,6 +66,16 @@ public class HtmlParsingService {
     }
 
     /**
+     * Extract all runner names from elements with class "runner-name".
+     */
+    public List<String> extractRunnerNames(String url) throws IOException {
+        return fetch(url).select("div.runner-name").stream()
+                .map(Element::text)
+                .filter(text -> !text.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Strip all HTML tags from a raw HTML string, returning plain text.
      */
     public String stripHtml(String html) {
