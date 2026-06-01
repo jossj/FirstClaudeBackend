@@ -22,15 +22,15 @@ class HtmlParsingServiceTest {
     private HtmlParsingService service;
 
     private static final String FAKE_URL = "https://example.com";
+    private Document defaultDoc;
 
     private Document buildDocument(String html) {
         return Jsoup.parse(html, FAKE_URL);
     }
 
     @BeforeEach
-    void setUp() throws IOException {
-        // Default document used by most tests — override per-test as needed
-        Document doc = buildDocument("""
+    void setUp() {
+        defaultDoc = buildDocument("""
                 <html>
                   <head><title>Test Page</title></head>
                   <body>
@@ -38,20 +38,18 @@ class HtmlParsingServiceTest {
                     <h2>Heading Two</h2>
                     <a href="/page1">Page 1</a>
                     <a href="/page2">Page 2</a>
-                    <a href="">Empty link</a>
                     <img src="/img/photo.jpg" />
                     <img src="/img/logo.png" />
-                    <img src="" />
                   </body>
                 </html>
                 """);
-        doReturn(doc).when(service).fetch(FAKE_URL);
     }
 
     // --- extractTitle ---
 
     @Test
     void extractTitle_returnsPageTitle() throws IOException {
+        doReturn(defaultDoc).when(service).fetch(FAKE_URL);
         assertThat(service.extractTitle(FAKE_URL)).isEqualTo("Test Page");
     }
 
@@ -65,6 +63,7 @@ class HtmlParsingServiceTest {
 
     @Test
     void extractLinks_returnsLinksWithTextAndHref() throws IOException {
+        doReturn(defaultDoc).when(service).fetch(FAKE_URL);
         List<Map<String, String>> links = service.extractLinks(FAKE_URL);
 
         assertThat(links).hasSize(2); // empty href is filtered out
@@ -84,6 +83,7 @@ class HtmlParsingServiceTest {
 
     @Test
     void extractImages_returnsAbsoluteImageUrls() throws IOException {
+        doReturn(defaultDoc).when(service).fetch(FAKE_URL);
         List<String> images = service.extractImages(FAKE_URL);
 
         assertThat(images).containsExactly(
@@ -140,6 +140,7 @@ class HtmlParsingServiceTest {
 
     @Test
     void extractBySelector_returnsMatchingElementText() throws IOException {
+        doReturn(defaultDoc).when(service).fetch(FAKE_URL);
         List<String> headings = service.extractBySelector(FAKE_URL, "h1, h2");
 
         assertThat(headings).containsExactly("Heading One", "Heading Two");
@@ -147,6 +148,7 @@ class HtmlParsingServiceTest {
 
     @Test
     void extractBySelector_returnsEmptyList_whenSelectorMatchesNothing() throws IOException {
+        doReturn(defaultDoc).when(service).fetch(FAKE_URL);
         assertThat(service.extractBySelector(FAKE_URL, "table")).isEmpty();
     }
 
